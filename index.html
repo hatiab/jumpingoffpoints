@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does Speed Matter? — My AIM Lab Lecture Reflection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B1020;--paper:#ECEEF1;--red:#E23D28;--redd:#B8301E;--redl:#FF6A55;--blue:#9DB8FF;--grey:#4A5163;--greyl:#B4BAC8;
+--h:'Space Grotesk','Helvetica Neue',Arial,sans-serif;--m:'IBM Plex Mono',ui-monospace,monospace;--b:'Inter','Helvetica Neue',Arial,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--b);background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 28px}
+.mono{font-family:var(--m);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+h1,h2,h3{font-family:var(--h);margin:0;letter-spacing:-.03em;line-height:1.02}
+section{padding:104px 0;position:relative}
+.dark{background:var(--ink);color:var(--paper)}
+.k{display:block;margin-bottom:18px}
+.dark .k{color:var(--blue)}.light .k{color:var(--redd)}
+h2{font-size:clamp(2.2rem,6vw,4.2rem);font-weight:700}
+h2 em{font-style:normal;color:var(--red)}.dark h2 em{color:var(--redl)}
+p{margin:0 0 16px}
+.txt p{font-size:1.12rem;max-width:560px}
+.dark .txt p{color:#D5D9E3}
+#bar{position:fixed;top:0;left:0;height:4px;width:0;background:var(--red);z-index:20}
+nav{position:fixed;top:0;right:0;z-index:15;padding:14px 18px;display:flex;gap:6px}
+nav a{width:12px;height:12px;border-radius:50%;border:2px solid var(--red);display:block}
+nav a.on{background:var(--red)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}.rings *,.trk.rain::before{animation:none!important}}
+/* chapters */
+.ch{display:grid;grid-template-columns:260px 1fr;gap:56px;align-items:center;margin-top:44px}
+.ch.flip{grid-template-columns:1fr 260px}.ch.flip .figure{order:2}
+.figure{position:relative}
+.char svg{width:100%;height:auto;display:block}
+.bubble{position:absolute;top:-6px;right:-14px;background:var(--paper);color:var(--ink);border-radius:14px;padding:8px 14px;font:700 .95rem var(--h);max-width:170px;line-height:1.15;box-shadow:0 0 0 2px var(--ink)}
+.dark .bubble{box-shadow:none}
+.flip .bubble{right:auto;left:-14px}
+.ground{height:3px;background:currentColor;opacity:.25;border-radius:2px;margin-top:-6px}
+/* hero */
+#hero{min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:96px 0 64px}
+.rings{position:absolute;right:-240px;bottom:-240px;width:760px;height:760px;pointer-events:none}
+.rings i{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(157,184,255,.28);animation:pulse 6s ease-in-out infinite}
+.rings i:nth-child(2){inset:110px;animation-delay:.6s;border-color:rgba(157,184,255,.2)}
+.rings i:nth-child(3){inset:220px;animation-delay:1.2s;border-color:rgba(157,184,255,.14)}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.55}}
+.hg{position:relative;display:grid;grid-template-columns:1fr 280px;gap:48px;align-items:center}
+#hero h1{font-size:clamp(3.2rem,10vw,7.6rem);font-weight:700;line-height:.95}
+#hero h1 em{font-style:normal;color:var(--redl)}
+.sub{font-size:clamp(1.1rem,2.2vw,1.35rem);color:#D5D9E3;max-width:560px;margin-top:26px}
+.by{margin-top:36px;font:.85rem var(--m);color:var(--greyl);letter-spacing:.04em;line-height:1.7}
+.by b{display:block;font:700 1.35rem var(--h);color:var(--paper);letter-spacing:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.op{font:.78rem var(--m);background:transparent;color:var(--paper);border:1.5px solid rgba(236,238,241,.4);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:34px}
+.op[aria-pressed=true]{background:var(--paper);color:var(--ink)}
+.op:disabled{opacity:.4;cursor:not-allowed}
+.op.pri{background:var(--redl);border-color:var(--redl);color:var(--ink)}
+.light .op{color:var(--ink);border-color:rgba(11,16,32,.45)}
+.light .op[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.light .op.pri{background:var(--red);border-color:var(--red);color:var(--paper)}
+/* route */
+.route{display:flex;align-items:center;gap:10px;margin:8px 0 22px;font:.8rem var(--m);text-transform:uppercase;letter-spacing:.06em}
+.route span{background:var(--ink);color:var(--paper);border-radius:999px;padding:6px 14px}
+.route i{flex:0 1 120px;border-top:3px dashed var(--redd)}
+.rt{margin-top:44px}
+.rt .route{flex-wrap:wrap;margin-top:22px}
+.rt .route i{flex:0 1 34px;min-width:14px}
+.route button{font:inherit;letter-spacing:inherit;text-transform:inherit;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:7px 14px;cursor:pointer;min-height:34px}
+.route button.on{background:var(--red)}
+/* quote */
+.q{margin:26px 0;border-top:2px solid currentColor;padding-top:14px;max-width:560px}
+.q b{display:block;font:700 clamp(1.4rem,3.2vw,2rem)/1.1 var(--h);letter-spacing:-.015em}
+.q span{display:block;margin-top:8px;font:.78rem var(--m);letter-spacing:.04em;opacity:.8}
+.light .q b{color:var(--redd)}.dark .q b{color:var(--redl)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 20px}
+.facts span,.facts button{border:1.5px solid rgba(236,238,241,.45);border-radius:999px;padding:5px 14px;font:500 .95rem var(--h);background:transparent;color:inherit}
+.facts button{cursor:pointer}
+.light .facts span,.light .facts button{border-color:rgba(11,16,32,.45)}
+.light .facts button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.note{margin-top:20px;font:.8rem/1.5 var(--m);opacity:.75;max-width:640px}
+/* shift */
+.shift{margin-top:44px;display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:center}
+.shift .from,.shift .to{font:700 clamp(1.3rem,3vw,2rem)/1.12 var(--h);letter-spacing:-.015em}
+.shift .to{color:var(--paper)}
+.shift svg{width:56px}
+.adds{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:26px}
+.add{border-top:3px solid var(--paper);padding-top:14px}
+.add .mono{font-size:.74rem;color:var(--blue)}
+.add h3{font-size:1.55rem;margin:10px 0}
+.add p{margin:0;font-size:1.02rem;color:#D5D9E3}
+button.add{display:block;text-align:left;background:none;border:0;border-top:3px solid var(--paper);padding:14px 0 0;color:inherit;font:inherit;cursor:pointer}
+button.add p{display:none}
+button.add.open p{display:block}
+button.add .tap{display:block;font:.72rem var(--m);color:var(--redl);letter-spacing:.06em;text-transform:uppercase}
+button.add.open .tap{display:none}
+/* notes */
+.notes{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.qcard{border-top:3px solid var(--red);padding:16px 0 0;min-height:150px}
+.qcard .mono{color:var(--redd);font-size:.74rem}
+.qcard p{margin:10px 0 0;font:700 1.3rem/1.25 var(--h);letter-spacing:-.01em;color:var(--ink)}
+button.qcard{display:block;text-align:left;background:none;border:0;border-top:3px solid var(--red);color:inherit;font:inherit;cursor:pointer;width:100%}
+.qcard .more{display:none;margin-top:12px;font:400 .98rem/1.5 var(--b);color:var(--grey)}
+.qcard.open .more{display:block}
+.qcard .tap{display:block;margin-top:12px;font:.72rem var(--m);color:var(--redd);letter-spacing:.06em;text-transform:uppercase}
+.qcard.open .tap{display:none}
+/* close */
+.eq{border-top:2px solid var(--ink);padding:16px 0 18px}
+.eq .mono{color:var(--grey);font-size:.74rem}
+.eq b{display:block;font:700 clamp(2rem,6.4vw,3.8rem)/1.05 var(--h);letter-spacing:-.02em;margin-top:4px}
+.eq.r{border-color:var(--red)}.eq.r .mono{color:var(--redd)}.eq.r b{color:var(--red)}
+.refs{margin-top:44px;padding-top:18px;border-top:1px solid #9AA1B2;font:.8rem/1.55 var(--m);color:var(--grey);display:grid;gap:8px;overflow-wrap:anywhere}
+footer{background:var(--ink);color:var(--greyl);padding:26px 0;font:.8rem var(--m)}
+
+/* ---- additions for interactive parts, same system ---- */
+.pick{margin-top:24px;border:1.5px solid rgba(11,16,32,.35);border-radius:8px;padding:16px 18px;max-width:560px;display:grid;gap:12px}
+.pick .mono{color:var(--redd);font-size:.72rem}
+.pout{font:700 1.15rem/1.25 var(--h);letter-spacing:-.01em;min-height:3.8em;margin:0}
+/* table */
+.tb{margin-top:30px;border-top:2px solid var(--ink)}
+.tb .r{display:grid;grid-template-columns:1.1fr 1.4fr 1.4fr;gap:18px;padding:14px 8px;border-bottom:1px solid rgba(11,16,32,.18);font-size:.98rem;transition:background .3s}
+.tb .r.h{font:.74rem var(--m);text-transform:uppercase;letter-spacing:.08em;color:var(--grey)}
+.tb .r b{font:700 1.05rem var(--h);letter-spacing:-.01em}
+.tb .r.cov span{color:var(--grey);font:.8rem var(--m)}
+.tb.hl .r.met{background:rgba(157,184,255,.35)}
+.tb .r.m{display:none;background:rgba(226,61,40,.09)}
+.tb .r.m.show{display:grid;animation:drop .5s ease}
+.tb .r.m b{color:var(--redd)}
+@keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.tb span[data-l]::before{content:attr(data-l) " · ";display:none;font:.72rem var(--m);color:var(--grey);text-transform:uppercase}
+.tbn{margin-top:14px}
+/* sim */
+.sim{margin-top:40px;border:1.5px solid rgba(236,238,241,.3);border-radius:8px;padding:18px 20px}
+.sim .mono{color:var(--blue);font-size:.72rem}
+.trk{position:relative;height:150px;margin-top:16px;overflow:hidden}
+.trk.rain::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(105deg,transparent 48%,rgba(157,184,255,.5) 50%,transparent 52%);background-size:22px 38px;animation:rainf .5s linear infinite}
+@keyframes rainf{to{background-position:-8px 38px}}
+.lane{position:absolute;left:52px;right:52px;top:0;bottom:0}
+.road{position:absolute;left:0;right:0;bottom:24px;height:3px;background:var(--paper);opacity:.3;border-radius:2px}
+.lane .e{position:absolute;bottom:0;font:.72rem var(--m);text-transform:uppercase;letter-spacing:.06em;color:var(--greyl)}
+.lane .e.a{left:0;transform:translateX(-50%)}.lane .e.b{right:0;transform:translateX(50%)}
+.mv{position:absolute;left:0;transform:translateX(-50%);bottom:24px}
+#mvWalk{width:52px}#mvWalk svg{width:100%;height:auto;display:block}
+#mvCar{width:96px;bottom:16px;display:none}#mvCar svg{width:100%;height:auto;display:block}
+.pop{position:absolute;transform:translateX(-50%);font:.72rem var(--m);border:1.5px solid var(--redl);color:var(--redl);border-radius:999px;padding:3px 10px;white-space:nowrap;opacity:0;transition:opacity .5s}
+.pop.in{opacity:1}
+.stats{display:flex;gap:34px;margin-top:6px;flex-wrap:wrap}
+.stats b{display:block;font:700 2rem var(--h);letter-spacing:-.02em}
+.sout{font:700 1.15rem/1.25 var(--h);letter-spacing:-.01em;min-height:3.8em;margin:14px 0 0;color:var(--redl)}
+/* process model */
+.fh{margin-top:34px;display:grid;gap:12px}
+.fh .bx{border:2px solid var(--ink);border-radius:8px;padding:12px 14px}
+.fh .bx>.mono{display:block;font-size:.72rem;color:var(--grey);margin-bottom:10px}
+.fh .in2{display:flex;flex-wrap:wrap;gap:10px}
+.fh .ar{text-align:center;font:.9rem var(--m);color:var(--redd);line-height:1}
+.st{flex:1;min-width:120px;font:700 1rem var(--h);letter-spacing:-.01em;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:6px;padding:12px;cursor:pointer}
+.st.sel{background:var(--ink);color:var(--paper)}
+.st.glow{box-shadow:0 0 0 3px var(--red)}
+.dt{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.dt .top{grid-column:1/-1}
+.dt h3{font-size:1.7rem;margin:6px 0 8px}
+.dt .top p{max-width:640px;margin:0}
+.dt .c{border-top:3px solid var(--ink);padding-top:12px}
+.dt .c.r{border-color:var(--red)}
+.dt .c .mono{font-size:.74rem;color:var(--grey)}.dt .c.r .mono{color:var(--redd)}
+.dt .c p{margin:8px 0 0}
+/* try it */
+.dark textarea{width:100%;min-height:110px;font:1rem/1.5 var(--b);background:transparent;color:var(--paper);border:1.5px solid rgba(236,238,241,.35);border-radius:8px;padding:12px;resize:vertical}
+.dark textarea:focus{outline:2px solid var(--redl)}
+.ent{border-top:2px solid var(--redl);padding-top:10px;margin-top:16px;max-width:560px}
+.ent .mono{color:var(--blue);font-size:.72rem}
+.ent p{margin:6px 0 0!important;font-size:1.05rem!important}
+@media(max-width:760px){
+ .ch,.ch.flip{grid-template-columns:1fr;gap:20px}.ch.flip .figure{order:0}
+ .figure{max-width:220px}.hg{grid-template-columns:1fr}.hg .figure{max-width:220px;order:-1}
+ .shift{grid-template-columns:1fr}.shift svg{transform:rotate(90deg);justify-self:start}
+ .bubble{right:-30px}.flip .bubble{left:auto;right:-30px}
+ .tb .r{grid-template-columns:1fr;gap:4px}.tb .r.h{display:none}.tb span[data-l]::before{display:inline}
+ .dt{grid-template-columns:1fr}.lane{left:44px;right:44px}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<nav id="nav" aria-label="Chapters"></nav>
+
+<section id="hero" class="dark" data-s>
+  <div class="rings" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div class="hg">
+      <div>
+        <span class="mono k">AIM Lab Lecture Series · Dr. Sam Meekings · A reflection</span>
+        <h1>Does<br>speed<br><em>matter?</em></h1>
+        <p class="sub">My notes from “Jumping Off Points: Making Opportunities from AI Disruptions in the Writing Classroom,” told through a walk I would rather take than a drive.</p>
+        <div class="by"><b>Khatimat Abilova</b>Northwestern University in Qatar · Medill<br>Monday 16 November 2026 · Projection Theater · Moderator: S. Venus Jin</div>
+      </div>
+      <div class="figure"><div class="char" data-prop="wave"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="c1" class="light" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 1 · Where I walked in</span>
+    <h2 class="rv">Nobody comes in <em>neutral</em></h2>
+    <div class="ch rv">
+      <div class="figure"><div class="char" data-prop="notebook"></div><div class="ground"></div><div class="bubble" id="stBubble">Where do I stand?</div></div>
+      <div class="txt">
+        <p>Dr. Meekings did not open with a claim. He opened with a drawing his daughter made, which he had promised to share, and then he named something I did not expect: nobody comes to the AI debate neutrally.</p>
+        <p>Some of us are keen to see what we can generate. Others are skeptical and pulled back toward older media. He pointed to print books outselling e-books again over the last decade, and to vinyl, once a bargain-bin format, being sought out again.</p>
+        <p>I liked that he named the feeling first. So here is mine. Pick yours.</p>
+        <div class="pick">
+          <span class="mono">Where do I stand today?</span>
+          <div class="row" id="stRow">
+            <button class="op" aria-pressed="false" data-i="0">Back to analog</button>
+            <button class="op" aria-pressed="false" data-i="1">Skeptical</button>
+            <button class="op" aria-pressed="false" data-i="2">Undecided</button>
+            <button class="op" aria-pressed="false" data-i="3">Keen</button>
+            <button class="op" aria-pressed="false" data-i="4">Early adopter</button>
+          </div>
+          <p class="pout" id="stOut">Whichever you pick, the exercise is his: name the feeling, then name the practice.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="c2" class="dark" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 2 · The article</span>
+    <h2 class="rv">A fear, <em>and a better question</em></h2>
+    <div class="ch flip rv">
+      <div class="txt">
+        <p>The talk is built on his article, <i>AI Won't Eat Your Brain: New Taxonomies &amp; Opportunities for the Creative Writing Classroom</i>. It began with a frustration. In his field, most talk about AI is about cognitive deficit: what the tool does to your brain if you engage with it too long. The advice that follows is to avoid it.</p>
+        <p>His answer was practical. For students, which includes all of us, even refusing something means engaging with it first. Otherwise we don't know what we are refusing.</p>
+      </div>
+      <div class="figure"><div class="char" data-prop="question"></div><div class="ground"></div><div class="bubble">Avoid, or engage first?</div></div>
+    </div>
+    <div class="shift rv">
+      <div class="from">“What does AI do to my brain?”</div>
+      <svg viewBox="0 0 56 24" fill="none" aria-hidden="true"><path d="M0 12H48M38 3L50 12L38 21" stroke="#ECEEF1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="to">“How do I engage with it well?”</div>
+    </div>
+    <p class="note rv">Outside the lecture: the deficit worry has data behind it. An MIT Media Lab preprint (Kosmyna et al., 2025) had 54 people write essays with an LLM, a search engine or nothing, and reported weaker brain connectivity and poorer recall of their own essays in the LLM group, which the authors call “cognitive debt.” It is a small preprint about essays, not creative writing. His point is not to deny findings like this, but to ask what a classroom should do with them besides avoid.</p>
+  </div>
+</section>
+
+<section id="c3" class="light" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 3 · Assumptions</span>
+    <h2 class="rv">Who decides what <em>counts as progress?</em></h2>
+    <div class="ch rv">
+      <div class="figure"><div class="char" data-prop="label"></div><div class="ground"></div><div class="bubble">Better at what?</div></div>
+      <div class="txt">
+        <p>One of his starting points: writing has always been technology. A stylus, a pencil, a surface. It is impossible to write with none, and writing always happens through mediation by the world around it.</p>
+        <p>Then he turned on the story we tell about that. The familiar picture of steady progress is a Western way of telling history, in which things are always getting better. Pick a route below and click through it.</p>
+      </div>
+    </div>
+    <div class="rt rv">
+      <div class="row">
+        <button class="op" aria-pressed="true" data-r="A">The story we're told</button>
+        <button class="op" aria-pressed="false" data-r="B">Same logic, other direction</button>
+      </div>
+      <div class="route" id="route"></div>
+      <div class="q" id="rtQ"><b></b><span></span></div>
+    </div>
+    <div class="txt rv"><p>His counter-chart runs from the bow and arrow through the musket and the gun to the atomic bombs dropped on Hiroshima and Nagasaki, and on to drones. The point is not that a pen is a weapon. It is that “things keep improving” hides what we chose to count.</p></div>
+  </div>
+</section>
+
+<section id="c4" class="dark" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 4 · Slide 4 · CW &amp; AI: a complex relationship</span>
+    <h2 class="rv">Prepared, <em>and worried</em></h2>
+    <div class="ch flip rv">
+      <div class="txt">
+        <p>What I valued is that the slide holds two columns and does not hurry to resolve them. On the one hand, creative writing already prioritizes four things. In graduate study, the critical commentary has long carried equal weight to the creative piece itself, so the field is unusually well prepared. Tap each one.</p>
+      </div>
+      <div class="figure"><div class="char" data-prop="notebook"></div><div class="ground"></div><div class="bubble">Prepared. But worried.</div></div>
+    </div>
+    <div class="adds rv">
+      <button class="add" aria-expanded="false"><span class="mono">Already prioritized · 1</span><h3>Reflexive commentaries</h3><span class="tap">+ Tap to open</span><p>A writer explains the choices behind the piece, tools included. When that explanation is graded, “where did AI enter?” is just another question the writer answers in the open.</p></button>
+      <button class="add" aria-expanded="false"><span class="mono">Already prioritized · 2</span><h3>Portfolios</h3><span class="tap">+ Tap to open</span><p>A polished piece can be produced in a minute. A trajectory of drafts, false starts and revisions cannot. Portfolios assess growth, which is what a classroom is for.</p></button>
+      <button class="add" aria-expanded="false"><span class="mono">Already prioritized · 3</span><h3>Embodied writing</h3><span class="tap">+ Tap to open</span><p>Writing from the body: place, memory, sensation. A model has read about rain. It has never been rained on, and the sentences worth keeping often come from there.</p></button>
+      <button class="add" aria-expanded="false"><span class="mono">Already prioritized · 4</span><h3>Imperfection as design</h3><span class="tap">+ Tap to open</span><p>Fluent and consistent is what AI does best (see slide 5). A field that treats the stumble and the odd phrase as voice is hard to automate away.</p></button>
+    </div>
+    <div class="q rv"><b>“A predominantly destructive force in the publishing industry”</b><span>Slide 4, on the other hand. It also called the effect on student reading habits worrying.</span></div>
+    <div class="txt rv"><p>That is the vinyl instinct from the opening. Both columns stay true at once, and I think that is what “complex relationship” means.</p></div>
+    <p class="note rv">My reading of the four cards, not his wording.</p>
+  </div>
+</section>
+
+<section id="c5" class="light" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 5 · Slide 5 · Stojanovic et al., 2023</span>
+    <h2 class="rv">What is <em>missing?</em></h2>
+    <div class="ch rv">
+      <div class="figure"><div class="char" data-prop="question"></div><div class="ground"></div><div class="bubble">What's not on the list?</div></div>
+      <div class="txt">
+        <p>He showed a comparison of AI and human writing, row by row, then covered part of it with one question: what is missing? Below is the table as I could read it. Two rows were hidden behind his banner, and I have not guessed them.</p>
+        <div class="row" style="margin-top:6px">
+          <button class="op" id="hlBtn" aria-pressed="false">Highlight what it measures</button>
+          <button class="op pri" id="missBtn">Reveal what is missing</button>
+        </div>
+      </div>
+    </div>
+    <div class="tb rv" id="tb">
+      <div class="r h"><span>Characteristic</span><span>Artificial intelligence</span><span>Human</span></div>
+      <div class="r met"><b>Consistency</b><span data-l="AI">Can maintain consistency</span><span data-l="Human">May struggle to maintain consistency</span></div>
+      <div class="r met"><b>Accuracy of information</b><span data-l="AI">May generate incorrect data due to poor resources or biases</span><span data-l="Human">May provide inaccurate information with potential grammatical errors</span></div>
+      <div class="r met"><b>Speed of text generation</b><span data-l="AI">Quickly generates longer text</span><span data-l="Human">Takes longer to produce lengthy text</span></div>
+      <div class="r cov"><b>Dependence on human input</b><span>(covered by the banner)</span><span>(covered by the banner)</span></div>
+      <div class="r cov"><b>Use of resources for decision-making</b><span>(covered by the banner)</span><span>(covered by the banner)</span></div>
+      <div class="r met"><b>Idea generation speed</b><span data-l="AI">Quickly generates ideas, often based on existing ones</span><span data-l="Human">Slower idea generation but tends to be original and authentic</span></div>
+      <div class="r met"><b>Content regeneration</b><span data-l="AI">Easily regenerates content (rewriting)</span><span data-l="Human">Takes longer to rewrite or rephrase text</span></div>
+      <div class="r met"><b>Scalability</b><span data-l="AI">High scalability</span><span data-l="Human">Limited scalability</span></div>
+      <div class="r met"><b>Multilingual support</b><span data-l="AI">Can generate content in any supported language</span><span data-l="Human">Writes in languages it understands and knows</span></div>
+      <div class="r m"><b>Intention</b><span data-l="AI">No stake in why this, why now</span><span data-l="Human">Writes because something needs saying</span></div>
+      <div class="r m"><b>Lived experience</b><span data-l="AI">Has read about it</span><span data-l="Human">Went through it</span></div>
+      <div class="r m"><b>Struggle and discovery</b><span data-l="AI">Arrives at an answer</span><span data-l="Human">Finds out what they think by writing it</span></div>
+      <div class="r m"><b>Accountability</b><span data-l="AI">Nobody answers for the words</span><span data-l="Human">A named person stands behind them</span></div>
+      <div class="r m"><b>Growth of the writer</b><span data-l="AI">The model is unchanged by the task</span><span data-l="Human">The writer is changed by the task</span></div>
+    </div>
+    <div class="q rv tbn"><b id="tbQ">Every readable row measures output.</b><span id="tbS">Only one, the originality and authenticity of ideas, gives the human an edge.</span></div>
+    <p class="note rv">The red rows are my answer to his question, not his.</p>
+  </div>
+</section>
+
+<section id="c6" class="dark" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 6 · An analogy</span>
+    <h2 class="rv">Walk <em>or drive?</em></h2>
+    <div class="txt rv">
+      <p>Speed was the row that kept bothering me, so I wrote down the picture I kept coming back to.</p>
+      <div class="q"><b>If I had a fast car, I could cover a mile in five minutes. On a good-weather day, I would still walk it.</b><span>My analogy, tidied from my notes at the lecture</span></div>
+      <p>Not because the car is bad. I was not trying to arrive; I was trying to take the walk. When the destination is all that matters, or it is pouring, I will take the car.</p>
+      <p>Writing in a classroom is usually a walk. The piece is the destination, but what we are really there for is what happens to the writer on the way. Run both trips.</p>
+    </div>
+    <div class="sim rv">
+      <div class="row">
+        <button class="op" id="wxSun" aria-pressed="true">Good weather</button>
+        <button class="op" id="wxRain" aria-pressed="false">Pouring rain</button>
+        <span style="flex:1"></span>
+        <button class="op pri" id="goDrive">Drive</button>
+        <button class="op pri" id="goWalk">Walk</button>
+      </div>
+      <div class="trk" id="trk">
+        <div class="lane" id="lane">
+          <div class="road"></div>
+          <span class="e a">Home</span><span class="e b">Destination</span>
+          <div class="mv" id="mvWalk"></div>
+          <div class="mv" id="mvCar"><svg viewBox="0 0 120 56" role="img" aria-label="Cartoon car"><path d="M8 36L8 26Q8 22 12 22L34 22L46 8Q48 6 52 6L82 6Q86 6 88 8L100 22L108 24Q112 25 112 30L112 36Z" fill="#E23D28" stroke="#0B1020" stroke-width="3" stroke-linejoin="round"/><path d="M50 12L46 22L68 22L68 12ZM74 12L74 22L94 22L84 12Z" fill="#9DB8FF" stroke="#0B1020" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="38" r="10" fill="#0B1020" stroke="#ECEEF1" stroke-width="1.5"/><circle cx="32" cy="38" r="4" fill="#ECEEF1"/><circle cx="90" cy="38" r="10" fill="#0B1020" stroke="#ECEEF1" stroke-width="1.5"/><circle cx="90" cy="38" r="4" fill="#ECEEF1"/></svg></div>
+        </div>
+      </div>
+      <div class="stats">
+        <div><span class="mono">Time taken</span><b id="sTime">0 min</b></div>
+        <div><span class="mono">Things noticed</span><b id="sNote">0</b></div>
+        <div><span class="mono">The mile</span><b style="font-size:1rem;font-family:var(--m);font-weight:400;padding-top:10px" id="sMile">5 min by car · 20 on foot</b></div>
+      </div>
+      <p class="sout" id="sOut">Choose how to make the trip.</p>
+    </div>
+    <div class="txt rv" style="margin-top:34px"><p>This is why I do not read Meekings as pro-AI or anti-AI. His slide-6 line is the same logic: identify where interventions are useful and where they are problematic. A form to fill in, a summary email: take the car. Writing as a way of thinking: take the walk, on purpose.</p></div>
+  </div>
+</section>
+
+<section id="c7" class="light" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 7 · Slide 6 · Flower &amp; Hayes, 1981</span>
+    <h2 class="rv">Where in the process <em>does it land?</em></h2>
+    <div class="ch flip rv">
+      <div class="txt">
+        <p>The slide pairs a classic model of how writers work with a finding. One study found that gen AI use adversely affects specific dimensions of creative writing skills among university students (Niloy et al., 2023). His conclusion was not “ban it.” It was that we need to find where interventions are useful and where they are problematic.</p>
+        <div class="facts"><span>600 students</span><span>10 universities</span></div>
+        <p style="font-size:.95rem;color:var(--grey)">The four dimensions it names. Tap one to see which stage of the model it points at.</p>
+        <div class="facts" id="dims">
+          <button aria-pressed="false" data-g="planning memory">Originality</button>
+          <button aria-pressed="false" data-g="translating">Content presentation</button>
+          <button aria-pressed="false" data-g="reviewing">Accuracy</button>
+          <button aria-pressed="false" data-g="planning translating">Elaboration</button>
+        </div>
+      </div>
+      <div class="figure"><div class="char" data-prop="laptop"></div><div class="ground"></div><div class="bubble">Which stage do I hand over?</div></div>
+    </div>
+    <div class="fh rv">
+      <div class="bx"><span class="mono">Task environment</span><div class="in2"><button class="st" data-stage="rhetorical">Rhetorical problem</button><button class="st" data-stage="text">Text produced</button></div></div>
+      <div class="ar">↕</div>
+      <div class="bx"><span class="mono">Writing process</span><div class="in2"><button class="st" data-stage="planning">Planning</button><button class="st" data-stage="translating">Translating</button><button class="st" data-stage="reviewing">Reviewing</button></div><div class="in2" style="margin-top:10px"><button class="st" data-stage="monitor">Monitor</button></div></div>
+      <div class="ar">↕</div>
+      <div class="bx"><span class="mono">Writer's long-term memory</span><div class="in2"><button class="st" data-stage="memory">Knowledge, experience, audience, genre</button></div></div>
+    </div>
+    <div class="dt rv" id="dt"></div>
+    <p class="note rv">The “help” and “cost” notes, and the mapping of dimensions to stages, are my interpretation, not claims from the study.</p>
+  </div>
+</section>
+
+<section id="c8" class="dark" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 8 · A connection</span>
+    <h2 class="rv">Disruption makes us <em>reconsider</em></h2>
+    <div class="ch rv">
+      <div class="figure"><div class="char" data-prop="label"></div><div class="ground"></div><div class="bubble">Look at it. With structure.</div></div>
+      <div class="txt">
+        <p>Dr. Meekings also researches writing and trauma, and the two subjects kept brushing against each other in my notes. When people work through something hard, writing helps them reconsider their own emotions: not pushing them away, but looking at them with some structure and distance.</p>
+        <p>Thinking about AI works the same way. The disruption forces us to reconsider assumptions we never examined: what counts as our writing, what effort is for, what a classroom owes a student. A reflexive commentary is the structure that makes the looking possible.</p>
+        <div class="q"><b>Avoiding and adopting are both ways of not looking.</b><span>My reading, linking the lecture to his wider research</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="c9" class="dark" data-s style="background:#E23D28;color:#0B1020">
+  <div class="wrap">
+    <span class="mono k rv" style="color:#0B1020">Chapter 9 · What changed in my question</span>
+    <h2 class="rv" style="color:#0B1020">From a verdict to <span style="color:#ECEEF1">a practice</span></h2>
+    <div class="shift rv" style="color:#0B1020">
+      <div class="from">“Is AI good or bad for writing?”</div>
+      <svg viewBox="0 0 56 24" fill="none" aria-hidden="true"><path d="M0 12H48M38 3L50 12L38 21" stroke="#0B1020" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="from" style="color:#0B1020;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px">“Where in the process, for what purpose, and who decides?”</div>
+    </div>
+    <p class="rv" style="margin-top:28px;max-width:640px;font-size:1.1rem">I came in treating it as a verdict. Here is what the lecture adds. These are practices I want to try, not claims from the talk.</p>
+    <div class="adds rv" style="color:#0B1020">
+      <div class="add" style="border-color:#0B1020"><span class="mono" style="color:#0B1020">From the article</span><h3>Engage, then decide</h3><p style="color:#0B1020">Use a tool enough to know what I am accepting or refusing, and say so in a reflexive note.</p></div>
+      <div class="add" style="border-color:#0B1020"><span class="mono" style="color:#0B1020">From slide 5</span><h3>Count what matters</h3><p style="color:#0B1020">Ask what the table leaves out, and do not let speed set the goals by default.</p></div>
+      <div class="add" style="border-color:#0B1020"><span class="mono" style="color:#0B1020">From slide 6</span><h3>Choose the stage</h3><p style="color:#0B1020">Planning, translating, reviewing and monitoring are different acts. Decide at each one.</p></div>
+    </div>
+    <div class="ch rv" style="margin-top:56px">
+      <div class="figure"><div class="char" data-prop="question"></div><div class="ground" style="background:#0B1020"></div></div>
+      <div class="txt"><p style="color:#0B1020;font-size:1.25rem;font-weight:500">My question got smaller and sharper at the same time: not whether to use it, but what this particular piece of writing is for.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="c10" class="light" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 10 · Beyond the lecture</span>
+    <h2 class="rv">Who else is <em>asking this?</em></h2>
+    <p class="rv" style="max-width:640px;margin-top:22px;font-size:1.1rem">This reflection is built on my notes, photos of slides 4 to 6, and the published work below. I went looking for research that lines up with his argument. Tap a card.</p>
+    <div class="notes rv">
+      <button class="qcard" aria-expanded="false"><span class="mono">Friction and judgment · Saharan et al., preprint</span><p>What we risk losing when creating gets easy</p><span class="tap">+ Tap to open</span><span class="more">The authors reject both refusal and uncritical adoption and call for critical reflective practice: the ongoing, situated weighing of when to use or refuse GenAI, treating judgment as something education should protect. That is the walk-or-drive choice turned into a habit.</span></button>
+      <button class="qcard" aria-expanded="false"><span class="mono">Classroom study · Anderson</span><p>Human-in-the-loop or machine-in-the-loop?</p><span class="tap">+ Tap to open</span><span class="more">Students wrote with no AI, with a human-in-the-loop process and with a machine-in-the-loop process, then reflected using a writing-process portfolio, to build agency through thoughtful choice. It is the portfolio-plus-commentary idea in practice.</span></button>
+      <button class="qcard" aria-expanded="false"><span class="mono">Course design · Northeastern</span><p>Reflection questions that fit any assignment</p><span class="tap">+ Tap to open</span><span class="more">A course called Writing Creatively in the Age of AI scaffolds students through increasingly complex engagements with generative AI. Its core principle: agency-focused reflection questions can attach to any assignment where AI is part of the process.</span></button>
+      <button class="qcard" aria-expanded="false"><span class="mono">Assessment design · Perkins et al., 2024</span><p>Even “full AI” keeps the commentary</p><span class="tap">+ Tap to open</span><span class="more">In the AI Assessment Scale, the creative-writing example at the full-AI level still asks for a multi-page reflective commentary on how AI shaped the work.</span></button>
+      <button class="qcard" aria-expanded="false"><span class="mono">The deficit worry · Kosmyna et al., 2025</span><p>Cognitive debt</p><span class="tap">+ Tap to open</span><span class="more">An MIT Media Lab preprint reported weaker brain connectivity and poorer recall of their own essays among people who wrote with an LLM. It is small, and about essays, but it is the evidence behind the fear his title answers.</span></button>
+    </div>
+  </div>
+</section>
+
+<section id="c11" class="dark" data-s>
+  <div class="wrap">
+    <span class="mono k rv">Chapter 11 · Your turn</span>
+    <h2 class="rv">One line of <em>reflexive commentary</em></h2>
+    <div class="ch flip rv">
+      <div class="txt">
+        <p>If reflexive commentary is the practice his field already has, I should try it. Think of the last thing you wrote. Where did you use a tool, or choose not to, and what was it for?</p>
+        <textarea id="ta" aria-label="Your reflexive commentary" placeholder="E.g. I let AI suggest headline options, but wrote the opening paragraph myself because that is where I work out what I think."></textarea>
+        <div class="row" style="margin-top:12px">
+          <button class="op pri" id="addE">Add to my portfolio</button>
+          <button class="op" id="dlE" disabled>Download (.txt)</button>
+          <span class="mono" id="wc" style="color:var(--greyl);font-size:.72rem">0 words</span>
+        </div>
+        <div id="entries"></div>
+        <p class="note">Entries stay on this page. Nothing is saved or sent.</p>
+      </div>
+      <div class="figure"><div class="char" data-prop="laptop"></div><div class="ground"></div><div class="bubble">Where did I use it?</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="c12" class="light" data-s style="padding-top:40px">
+  <div class="wrap">
+    <span class="mono k rv">Closing</span>
+    <h2 class="rv">What I'm taking <em>with me</em></h2>
+    <div style="margin-top:44px">
+      <div class="eq rv"><span class="mono">Slide 4 · Creative writing</span><b>Prepared ≠ Protected</b></div>
+      <div class="eq rv"><span class="mono">Slide 5 · AI vs human</span><b>Fast ≠ Formative</b></div>
+      <div class="eq rv"><span class="mono">Slide 6 · The process</span><b>Whether ≠ Where</b></div>
+      <div class="eq r rv"><span class="mono">My question</span><b>Speed = The point?</b></div>
+    </div>
+    <div class="ch rv" style="margin-top:56px">
+      <div class="figure"><div class="char" data-prop="wave"></div><div class="ground"></div></div>
+      <div class="txt"><p style="font-size:1.3rem;font-weight:500">I came in asking whether AI is good or bad for writing. I am leaving with a better question: what is this writing for, and is speed what I want from it?</p></div>
+    </div>
+    <div class="refs rv">
+      <div>Meekings, S. (2026). AI Won't Eat Your Brain: New Taxonomies &amp; Opportunities for the Creative Writing Classroom. Listed on his NU-Q profile and ResearchGate.</div>
+      <div>Slide citations: Stojanovic et al. (2023), comparison of AI and human writing; Flower, L. and Hayes, J. R. (1981), cognitive process model of writing; Niloy et al. (2023), p. 919.</div>
+      <div>Kosmyna, N. et al. (2025). Your Brain on ChatGPT: Accumulation of Cognitive Debt when Using an AI Assistant for Essay Writing Task. arXiv:2506.08872 (preprint).</div>
+      <div>Saharan, S. et al. What We Risk Losing When Creating Gets Easy: Friction, Judgment, and Critical Reflective Practice with Generative AI in Creative Work. arXiv:2608.07506.</div>
+      <div>Anderson, S. Promoting Writer Agency and AI Literacy through Process and Reflection. WAC Clearinghouse, wacclearinghouse.org/docs/proceedings/cw2025/anderson.pdf</div>
+      <div>Agency-Focused Reflection on AI-Assisted Writing. Northeastern University, learning.northeastern.edu.</div>
+      <div>Perkins, M., Furze, L., Roe, J. and MacVaugh, J. (2024). The AI Assessment Scale.</div>
+    </div>
+  </div>
+</section>
+<footer><div class="wrap">Khatimat Abilova · Northwestern University in Qatar · AIM Lab Lecture Series reflection</div></footer>
+
+<script>
+(function(){
+  var SKIN='#F2CBAC',HAIR='#B98F58',HAIRD='#8A6238',HAIRL='#DDBB82',TOP='#1B2547',INK='#0B1020',SHORTS='#5B7FBF';
+  function C(x,y,r,f,w){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'" stroke="'+INK+'" stroke-width="'+(w||3)+'"/>'}
+  function prop(p){
+    var pp='#ECEEF1';
+    switch(p){
+      case 'label':return '<g><rect x="76" y="212" width="88" height="48" rx="6" fill="'+pp+'" stroke="'+INK+'" stroke-width="3"/><rect x="85" y="221" width="34" height="14" rx="7" fill="'+INK+'"/><text x="102" y="231.5" font-family="IBM Plex Mono,monospace" font-size="10" fill="'+pp+'" text-anchor="middle">AI</text><rect x="85" y="240" width="68" height="6" rx="3" fill="'+INK+'"/><rect x="85" y="250" width="48" height="5" rx="2.5" fill="#C3C8D2"/></g>';
+      case 'laptop':return '<g><rect x="74" y="212" width="92" height="50" rx="5" fill="'+INK+'"/><rect x="80" y="218" width="80" height="38" rx="3" fill="#9DB8FF"/><path d="M112 228L132 237L112 246Z" fill="'+INK+'"/></g>';
+      case 'notebook':return '<g><rect x="76" y="212" width="88" height="52" rx="5" fill="'+pp+'" stroke="'+INK+'" stroke-width="3"/><rect x="76" y="212" width="13" height="52" fill="'+INK+'"/><rect x="98" y="226" width="54" height="5" rx="2" fill="'+INK+'"/><rect x="98" y="238" width="44" height="5" rx="2" fill="#C3C8D2"/><rect x="98" y="250" width="50" height="5" rx="2" fill="#C3C8D2"/></g>';
+      case 'question':return '<text x="184" y="76" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="72" fill="'+INK+'" stroke="'+pp+'" stroke-width="0">?</text>';
+      default:return '';
+    }
+  }
+  function arm(x1,y1,x2,y2){return '<path d="M'+x1+' '+y1+'L'+x2+' '+y2+'" stroke="'+INK+'" stroke-width="22" stroke-linecap="round"/><path d="M'+x1+' '+y1+'L'+x2+' '+y2+'" stroke="'+TOP+'" stroke-width="16" stroke-linecap="round"/>'+C(x2,y2+2,10,SKIN,3)}
+  function curlsBack(){
+    var o='',i,a,x,y,cols=[HAIRD,HAIR,HAIRL];
+    for(i=0;i<14;i++){a=(-215+i*18.5)*Math.PI/180;x=120+68*Math.cos(a);y=110+68*Math.sin(a);o+=C(x.toFixed(1),y.toFixed(1),23,cols[i%3])}
+    [[52,150,23],[44,178,23],[48,206,22],[58,232,21],[72,254,19],[188,150,23],[196,178,23],[192,206,22],[182,232,21],[168,254,19],[70,170,20],[170,170,20]].forEach(function(c,k){o+=C(c[0],c[1],c[2],cols[k%3])});
+    return o;
+  }
+  function curlsShoulders(){
+    var o='';
+    [[78,176,17],[70,198,17],[78,220,16],[162,176,17],[170,198,17],[162,220,16]].forEach(function(c,k){o+=C(c[0],c[1],c[2],k%2?HAIR:HAIRL)});
+    return o;
+  }
+  function curlsFront(){
+    var o='',cols=[HAIRL,HAIR,HAIRD];
+    [[56,104,17],[184,104,17],[62,80,18],[178,80,18],[80,66,20],[100,56,20],[120,52,20],[140,56,20],[160,66,20],[96,82,13],[144,82,13],[120,76,14]].forEach(function(c,k){o+=C(c[0],c[1],c[2],cols[k%3])});
+    return o;
+  }
+  function eye(x){return '<ellipse cx="'+x+'" cy="120" rx="12" ry="14" fill="#fff" stroke="'+INK+'" stroke-width="3"/><circle cx="'+x+'" cy="122" r="9" fill="#3E9A5B"/><circle cx="'+x+'" cy="122" r="4.4" fill="'+INK+'"/><circle cx="'+(x+3.5)+'" cy="117.5" r="3" fill="#fff"/><circle cx="'+(x-3)+'" cy="126" r="1.6" fill="#fff"/>'}
+  function svg(p){
+    var armL=arm(90,194,72,238),armR=p==='wave'?arm(150,194,190,150):arm(150,194,168,238);
+    var legs='<rect x="94" y="270" width="17" height="26" fill="'+SKIN+'" stroke="'+INK+'" stroke-width="3"/><rect x="129" y="270" width="17" height="26" fill="'+SKIN+'" stroke="'+INK+'" stroke-width="3"/>';
+    var shoes='<ellipse cx="100" cy="300" rx="19" ry="10" fill="#E23D28" stroke="'+INK+'" stroke-width="3"/><ellipse cx="140" cy="300" rx="19" ry="10" fill="#E23D28" stroke="'+INK+'" stroke-width="3"/><path d="M83 304Q100 311 117 304M123 304Q140 311 157 304" stroke="#fff" stroke-width="3" fill="none"/>';
+    return '<svg viewBox="0 0 240 316" role="img" aria-label="Cartoon illustration of the author, with full, voluminous curly bronde hair and green eyes">'+
+      curlsBack()+legs+shoes+
+      '<rect x="86" y="244" width="68" height="32" rx="8" fill="'+SHORTS+'" stroke="'+INK+'" stroke-width="3"/>'+
+      '<rect x="84" y="176" width="72" height="76" rx="20" fill="'+TOP+'" stroke="'+INK+'" stroke-width="3"/>'+
+      armL+armR+curlsShoulders()+
+      C(120,112,60,SKIN,3.5)+
+      curlsFront()+
+      '<path d="M86 100Q98 92 110 99M130 99Q142 92 154 100" stroke="#5A3E26" stroke-width="4" fill="none" stroke-linecap="round"/>'+
+      eye(98)+eye(142)+
+      '<path d="M116 136Q120 140 124 136" stroke="'+INK+'" stroke-width="2.5" fill="none" stroke-linecap="round"/>'+
+      '<path d="M104 146Q120 164 136 146Z" fill="#8C2A2A" stroke="'+INK+'" stroke-width="3" stroke-linejoin="round"/><path d="M110 148H130" stroke="#fff" stroke-width="3"/>'+
+      '<circle cx="80" cy="140" r="8" fill="#FF8A7A" opacity=".55"/><circle cx="160" cy="140" r="8" fill="#FF8A7A" opacity=".55"/>'+
+      prop(p)+'</svg>';
+  }
+  [].forEach.call(document.querySelectorAll('.char'),function(el){el.innerHTML=svg(el.getAttribute('data-prop'))});
+  document.getElementById('mvWalk').innerHTML=svg('');
+
+  var secs=[].slice.call(document.querySelectorAll('section[data-s]')),nav=document.getElementById('nav'),bar=document.getElementById('bar');
+  secs.forEach(function(s,i){var a=document.createElement('a');a.href='#'+s.id;a.setAttribute('aria-label','Go to part '+(i+1));nav.appendChild(a)});
+  var dots=[].slice.call(nav.children);
+  function upd(){var h=document.documentElement,max=h.scrollHeight-innerHeight;bar.style.width=(max>0?scrollY/max*100:0)+'%';
+    var cur=0;secs.forEach(function(s,i){if(s.getBoundingClientRect().top<innerHeight*.4)cur=i});dots.forEach(function(d,i){d.className=i===cur?'on':''})}
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+  var els=document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});els.forEach(function(e){io.observe(e)})}
+  else{els.forEach(function(e){e.classList.add('in')})}
+
+  var $=function(s){return document.querySelector(s)},$$=function(s){return [].slice.call(document.querySelectorAll(s))};
+
+  /* ch1: stance */
+  var ST=[
+    ["Print. Vinyl. Pencil.","Pulling toward the analog. He named this pull and treated it as legitimate, not backward."],
+    ["Look first, then refuse.","Skeptical, but curious enough to look. This is the “engage before you refuse” position from his article."],
+    ["Both columns are true.","Undecided in a useful way, holding both columns of slide 4 at once."],
+    ["What can we generate?","Keen to see what it can do. Worth asking, as well, what we are asked to give up for it."],
+    ["Watch what speed decides.","Early adopter. The thing to watch, per slides 5 and 6, is letting speed quietly set your goals."]
+  ];
+  $$('#stRow .op').forEach(function(b){b.addEventListener('click',function(){
+    $$('#stRow .op').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    var d=ST[+b.dataset.i];$('#stBubble').textContent=d[0];$('#stOut').textContent=d[1];
+  })});
+
+  /* ch3: routes */
+  var RT={
+    A:[["Stylus","Writing begins as technology: a tool, a surface, a skill. There was never a tech-free writing to go back to."],
+       ["Pen & paper","Cheaper, faster, more portable. More people can write."],
+       ["Printing press","Copies multiply. Authorship, readership and the book trade reorganize around it."],
+       ["Typewriter","Drafts get easy to revise. The act of writing is reshaped by its tool again."],
+       ["Generative AI","The next rung of the ladder, or a different kind of thing? The story we are told says rung."]],
+    B:[["Bow & arrow","Same ladder, pointed at something else. Each step is better at whatever is being measured."],
+       ["Musket","Longer reach, less skill required."],
+       ["Rifles","Faster, more reliable, more scalable."],
+       ["Atomic bombs","Hiroshima and Nagasaki. Progress by the same measure of reach and power."],
+       ["Drones","Distance removes the person from the consequence. The ladder keeps going."]]
+  };
+  var rm='A',ri=0;
+  function drawRoute(){
+    var set=RT[rm];
+    $('#route').innerHTML=set.map(function(s,i){return (i?'<i></i>':'')+'<button class="'+(i===ri?'on':'')+'" data-i="'+i+'">'+s[0]+'</button>'}).join('');
+    $$('#route button').forEach(function(b){b.addEventListener('click',function(){ri=+b.dataset.i;drawRoute()})});
+    var q=$('#rtQ');q.querySelector('b').textContent=set[ri][0];
+    q.querySelector('span').textContent=set[ri][1]+(ri===4?'  Progress toward what, measured by whom?':'');
+  }
+  $$('.rt > .row .op').forEach(function(b){b.addEventListener('click',function(){
+    rm=b.dataset.r;ri=0;$$('.rt > .row .op').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});drawRoute();
+  })});
+  drawRoute();
+
+  /* ch4 + ch10 toggles */
+  $$('button.add,button.qcard').forEach(function(b){b.addEventListener('click',function(){
+    var o=b.classList.toggle('open');b.setAttribute('aria-expanded',o);
+  })});
+
+  /* ch5: table */
+  var tb=$('#tb'),hl=$('#hlBtn'),mb=$('#missBtn'),on=false;
+  hl.addEventListener('click',function(){var v=tb.classList.toggle('hl');hl.setAttribute('aria-pressed',v);
+    $('#tbQ').textContent=v?'Speed. Volume. Consistency. Scale.':'Every readable row measures output.';
+    $('#tbS').textContent=v?'The blue rows are what the table counts. Almost all of it is about the product, not the person.':'Only one, the originality and authenticity of ideas, gives the human an edge.';});
+  mb.addEventListener('click',function(){on=!on;
+    $$('#tb .r.m').forEach(function(r,k){setTimeout(function(){r.classList.toggle('show',on)},on?k*140:0)});
+    mb.textContent=on?'Hide what is missing':'Reveal what is missing';
+    if(on){$('#tbQ').textContent='What happens to the writer.';$('#tbS').textContent='Intention, experience, struggle, accountability, growth. None of it is a production metric.';}
+  });
+
+  /* ch6: walk or drive */
+  var wx='sun',run=false,raf=0,lane=$('#lane'),mW=$('#mvWalk'),mC=$('#mvCar');
+  var NOTES={sun:[[.12,'a neighbour waves'],[.3,'jasmine in the air'],[.5,'a stuck sentence clicks'],[.7,'a street I had not seen'],[.88,'the light on the glass']],
+             rain:[[.3,'rain in my collar'],[.7,'wet shoes']]};
+  function setWx(w){wx=w;$('#trk').className='trk'+(w==='rain'?' rain':'');
+    $('#wxSun').setAttribute('aria-pressed',w==='sun');$('#wxRain').setAttribute('aria-pressed',w==='rain');reset('Choose how to make the trip.')}
+  function reset(msg){cancelAnimationFrame(raf);run=false;$$('.pop').forEach(function(p){p.remove()});
+    mW.style.left='0%';mC.style.left='0%';mW.style.display='block';mC.style.display='none';
+    $('#sTime').textContent='0 min';$('#sNote').textContent='0';$('#sOut').textContent=msg;
+    $('#goDrive').disabled=false;$('#goWalk').disabled=false}
+  function go(mode){
+    if(run)return;reset('');run=true;$('#goDrive').disabled=true;$('#goWalk').disabled=true;
+    var mv=mode==='drive'?mC:mW;mW.style.display=mode==='drive'?'none':'block';mC.style.display=mode==='drive'?'block':'none';
+    var dur=mode==='drive'?2000:9000,mins=mode==='drive'?5:20,notes=mode==='walk'?NOTES[wx]:[],seen=0,t0=performance.now();
+    (function tick(now){
+      var p=Math.min(1,(now-t0)/dur);mv.style.left=(p*100)+'%';$('#sTime').textContent=Math.round(p*mins)+' min';
+      notes.forEach(function(n,k){if(p>=n[0]&&k>=seen){seen=k+1;$('#sNote').textContent=seen;
+        var el=document.createElement('span');el.className='pop';el.textContent=n[1];el.style.left=(n[0]*100)+'%';el.style.top=(k%2?'30px':'2px');lane.appendChild(el);
+        requestAnimationFrame(function(){el.classList.add('in')});}});
+      if(p<1){raf=requestAnimationFrame(tick);return}
+      run=false;$('#goDrive').disabled=false;$('#goWalk').disabled=false;
+      var m=mode==='drive'
+        ?(wx==='sun'?'Arrived in 5 minutes. Fifteen minutes saved, nothing noticed. Fine, if the destination was all I wanted.':'Arrived dry in 5 minutes. In this weather the car is the right call, and that is a fair use of speed.')
+        :(wx==='sun'?'Arrived in 20 minutes with five things I would not have had otherwise. The walk was the point.':'Arrived in 20 minutes, wet, noticing mostly the rain. If the journey is not worth having, neither is the walk.');
+      $('#sOut').textContent=m;
+    })(t0);
+  }
+  $('#goDrive').addEventListener('click',function(){go('drive')});
+  $('#goWalk').addEventListener('click',function(){go('walk')});
+  $('#wxSun').addEventListener('click',function(){setWx('sun')});
+  $('#wxRain').addEventListener('click',function(){setWx('rain')});
+  reset('Choose how to make the trip.');
+
+  /* ch7: process model */
+  var FH={
+    rhetorical:["Rhetorical problem","Who am I writing for, and why? The situation that makes a piece of writing necessary.","Can prompt me to think about audiences I had not considered.","It has no stake in the problem. If I outsource the framing, I am answering a question I did not pose."],
+    text:["Text produced","The page so far, which talks back to the writer and shapes what comes next.","Gives me raw material to react against quickly.","A page I did not write teaches me less about what I meant."],
+    planning:["Planning","Generating ideas, setting goals, organizing what I am going to say.","Brainstorming angles; showing me what I had not thought of.","Ideas “often based on existing ones” (slide 5). Starting from the average of everything can cost originality and elaboration."],
+    translating:["Translating","Turning ideas into sentences on the page.","Language support, especially across languages (slide 5); a way past the blank page.","The stumble is where thinking happens. A smooth generated sentence skips it and smooths out my voice."],
+    reviewing:["Reviewing","Reading my own draft critically and revising it.","A tireless first reader for clarity and structure.","It may generate incorrect information (slide 5). Accepting edits without judging them puts accuracy at risk."],
+    monitor:["Monitor","The writer's running control: when to plan, write or revise, and when it is good enough.","Reflective logs and commentaries can make my monitoring visible.","If a tool decides when to move on, I never build the judgment to decide that myself."],
+    memory:["Writer's long-term memory","What I know about the topic, the audience, the genre, and my own experience.","Can remind me of conventions and references.","It is the source of authenticity. If nothing of mine goes into the draft, there is nothing of me in it."]
+  };
+  function stage(k){
+    $$('.st').forEach(function(s){s.classList.toggle('sel',s.dataset.stage===k)});
+    var d=FH[k];
+    $('#dt').innerHTML='<div class="top"><span class="mono" style="color:var(--redd);font-size:.74rem">Stage</span><h3>'+d[0]+'</h3><p>'+d[1]+'</p></div>'+
+      '<div class="c"><span class="mono">Where AI may help</span><p>'+d[2]+'</p></div><div class="c r"><span class="mono">Where it may cost</span><p>'+d[3]+'</p></div>';
+  }
+  $$('.st').forEach(function(s){s.addEventListener('click',function(){
+    $$('#dims button').forEach(function(x){x.setAttribute('aria-pressed','false')});$$('.st').forEach(function(x){x.classList.remove('glow')});stage(s.dataset.stage)})});
+  $$('#dims button').forEach(function(b){b.addEventListener('click',function(){
+    $$('#dims button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    var g=b.dataset.g.split(' ');$$('.st').forEach(function(s){s.classList.toggle('glow',g.indexOf(s.dataset.stage)>-1)});stage(g[0]);
+  })});
+  stage('planning');
+
+  /* ch11: portfolio */
+  var ta=$('#ta'),wc=$('#wc'),list=$('#entries'),dl=$('#dlE'),items=[];
+  ta.addEventListener('input',function(){var n=ta.value.trim()?ta.value.trim().split(/\s+/).length:0;wc.textContent=n+' word'+(n===1?'':'s')});
+  $('#addE').addEventListener('click',function(){
+    var v=ta.value.trim();if(!v)return;items.push(v);
+    var d=document.createElement('div');d.className='ent';var m=document.createElement('span');m.className='mono';m.textContent='Entry '+items.length;
+    var p=document.createElement('p');p.textContent=v;d.appendChild(m);d.appendChild(p);list.appendChild(d);
+    ta.value='';wc.textContent='0 words';dl.disabled=false;
+  });
+  dl.addEventListener('click',function(){
+    var blob=new Blob(['My reflexive commentary portfolio\n\n'+items.map(function(t,i){return (i+1)+'. '+t}).join('\n\n')+'\n'],{type:'text/plain'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my_reflexive_portfolio.txt';a.click();URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>
